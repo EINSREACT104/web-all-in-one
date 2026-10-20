@@ -1,0 +1,2395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>MY Xteins Landing Page</title>
+<style>
+  :root {
+    --accent: #e94560;
+    --accent-soft: rgba(233, 69, 96, 0.15);
+    --accent-border: rgba(233, 69, 96, 0.4);
+    --accent-shadow: rgba(233, 69, 96, 0.5);
+    --accent-glow: rgba(233, 69, 96, 0.2);
+    --bg-1: #1a1a2e;
+    --bg-2: #16213e;
+    --bg-3: #0f3460;
+    --text: #e0e0e0;
+    --text-dim: #a0a0b0;
+    --text-muted: #666;
+    --card-bg: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --input-bg: rgba(0, 0, 0, 0.3);
+    --input-border: rgba(255, 255, 255, 0.15);
+    --secondary-bg: rgba(255, 255, 255, 0.1);
+    --success: #4ecca3;
+    --note-font: 13px;
+  }
+  body.light-mode {
+    --bg-1: #f5f5f7;
+    --bg-2: #eef0f4;
+    --bg-3: #e0e4ec;
+    --text: #1a1a2e;
+    --text-dim: #555;
+    --text-muted: #999;
+    --card-bg: #ffffff;
+    --card-border: #dde1e8;
+    --input-bg: #ffffff;
+    --input-border: #c8cdd6;
+    --secondary-bg: #e8ebf0;
+    --accent-soft: rgba(0, 0, 0, 0.05);
+    --accent-border: rgba(0, 0, 0, 0.15);
+    --accent-glow: rgba(0, 0, 0, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { font-size: 16px; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    min-height: 100dvh;
+    color: var(--text);
+    overflow-x: hidden;
+    transition: background 0.3s ease, color 0.3s ease;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: clamp(8px, 2.5vw, 14px);
+    padding-bottom: calc(clamp(60px, 15vw, 80px) + env(safe-area-inset-bottom));
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .icon-btn {
+    width: 40px; height: 40px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text);
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .icon-btn:active { transform: scale(0.92); background: var(--accent-soft); }
+
+  .theme-panel {
+    display: none;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    animation: fadeIn 0.25s;
+  }
+  .theme-panel.open { display: block; }
+  .theme-panel h4 {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+  .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .color-swatch {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .color-swatch::after {
+    content: '✓';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px;
+    opacity: 0; transition: opacity 0.2s;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .color-swatch.active { border-color: var(--text); transform: scale(1.1); }
+  .color-swatch.active::after { opacity: 1; }
+  .color-swatch:active { transform: scale(0.9); }
+
+  /* === JUDUL APP (di atas jam) === */
+  .app-title-header {
+    text-align: center;
+    margin-bottom: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, var(--accent), var(--bg-3));
+    border-radius: 16px;
+    border: 1px solid var(--accent-border);
+    box-shadow: 0 4px 20px var(--accent-glow);
+    position: relative;
+    overflow: hidden;
+  }
+  .app-title-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .app-title-main {
+    font-size: clamp(18px, 5.5vw, 24px);
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    position: relative;
+    z-index: 1;
+  }
+  .app-title-sub {
+    font-size: clamp(10px, 2.8vw, 12px);
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 2px;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+  }
+
+  .clock-header {
+    background: linear-gradient(135deg, var(--bg-3), var(--bg-2));
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    padding: clamp(12px, 3.5vw, 18px);
+    text-align: center;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    transition: all 0.3s;
+  }
+  .clock-time {
+    font-size: clamp(32px, 10vw, 42px);
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 2px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .clock-date { font-size: clamp(11px, 3.2vw, 13px); color: var(--text-dim); margin-top: 4px; }
+  .alarm-status { font-size: clamp(10px, 3vw, 12px); margin-top: 8px; color: var(--success); transition: color 0.3s; }
+  .alarm-status.off { color: var(--text-muted); }
+
+  .tab-nav {
+    display: flex; gap: 4px; margin-bottom: 12px;
+    background: var(--card-bg);
+    padding: 5px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: clamp(8px, 2.5vw, 10px) clamp(2px, 1vw, 6px);
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: clamp(10px, 2.9vw, 12px);
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .tab-btn.active { background: var(--accent); color: white; box-shadow: 0 2px 10px var(--accent-shadow); }
+  .tab-btn:active { transform: scale(0.96); }
+
+  .panel { display: none; animation: fadeIn 0.3s; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: clamp(12px, 3.5vw, 16px);
+    margin-bottom: 12px;
+    transition: background 0.3s, border 0.3s;
+  }
+  .card h3 {
+    font-size: clamp(13px, 3.6vw, 15px);
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* DIARY */
+  .diary-toolbar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .diary-toolbar button {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 10px;
+    background: var(--secondary-bg);
+    color: var(--text);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    font-size: clamp(11px, 3vw, 12px);
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .diary-toolbar button:active { transform: scale(0.95); }
+
+  .mood-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 8px 0;
+  }
+  .mood-btn {
+    flex: 1;
+    min-width: 0;
+    aspect-ratio: 1;
+    max-width: 48px;
+    background: var(--input-bg);
+    border: 2px solid var(--input-border);
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mood-btn.active {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    transform: scale(1.1);
+  }
+  .mood-btn:active { transform: scale(0.9); }
+
+  .tag-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 8px 0;
+  }
+  .tag-btn {
+    padding: 5px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text);
+    transition: all 0.2s;
+  }
+  .tag-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .tag-btn:active { transform: scale(0.95); }
+
+  .search-wrap {
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .search-input {
+    width: 100%;
+    padding: 10px 36px 10px 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: clamp(13px, 3.5vw, 14px);
+    font-family: inherit;
+  }
+  .search-input:focus { outline: none; border-color: var(--accent); }
+  .search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+    display: none;
+  }
+  .search-clear.show { display: block; }
+
+  .filter-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .filter-tabs::-webkit-scrollbar { display: none; }
+  .filter-tab {
+    padding: 6px 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text-dim);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .filter-tab.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-box {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: clamp(18px, 5vw, 22px);
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: clamp(9px, 2.6vw, 10px);
+    color: var(--text-dim);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .diary-input {
+    width: 100%;
+    min-height: clamp(120px, 35vw, 150px);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    padding: 12px;
+    color: var(--text);
+    font-size: clamp(13px, 3.8vw, 14px);
+    font-family: inherit;
+    resize: vertical;
+    line-height: 1.6;
+    transition: border 0.2s, background 0.3s;
+  }
+  .diary-input:focus { outline: none; border-color: var(--accent); }
+
+  .btn {
+    padding: clamp(9px, 2.8vw, 11px) clamp(16px, 5vw, 22px);
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: clamp(12px, 3.4vw, 13px);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:active { transform: scale(0.96); }
+  .btn-secondary { background: var(--secondary-bg); color: var(--text); }
+  .btn-danger { background: #c0392b; color: white; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .entry {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.3s;
+    position: relative;
+  }
+  .entry.pinned {
+    border-left-color: #ffdd00;
+    background: rgba(255, 221, 0, 0.08);
+  }
+  .entry-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .entry-mood { font-size: 18px; }
+  .entry-pin { font-size: 14px; }
+  .entry-date {
+    font-size: clamp(10px, 2.9vw, 11px);
+    color: var(--success);
+    font-weight: 600;
+    flex: 1;
+  }
+  .entry-tag {
+    padding: 2px 8px;
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .entry-text {
+    font-size: var(--note-font);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 8px 0;
+  }
+  .entry-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .entry-actions button {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    border: 1px solid;
+    transition: all 0.2s;
+  }
+  .btn-edit {
+    background: rgba(59,130,246,0.15);
+    color: #3b82f6;
+    border-color: rgba(59,130,246,0.4);
+  }
+  .btn-edit:active { background: #3b82f6; color: white; }
+  .btn-pin {
+    background: rgba(255,221,0,0.15);
+    color: #d4a400;
+    border-color: rgba(255,221,0,0.4);
+  }
+  .btn-pin:active { background: #ffdd00; color: #1a1a2e; }
+  .btn-del {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent-border);
+  }
+  .btn-del:active { background: var(--accent); color: white; }
+
+  .font-sizes { display: flex; gap: 4px; flex: 1; }
+  .font-size-btn {
+    flex: 1;
+    padding: 6px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    font-family: inherit;
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .font-size-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  label { display: block; font-size: clamp(11px, 3vw, 12px); color: var(--text-dim); margin-bottom: 4px; margin-top: 10px; }
+  input[type="time"], input[type="number"], select {
+    width: 100%;
+    padding: clamp(9px, 2.7vw, 11px);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: clamp(13px, 3.8vw, 14px);
+    font-family: inherit;
+    transition: border 0.2s, background 0.3s;
+  }
+  input:focus, select:focus { outline: none; border-color: var(--accent); }
+  select option { background: var(--bg-2); color: var(--text); }
+
+  .timer-display {
+    font-size: clamp(38px, 12vw, 48px);
+    font-weight: 700;
+    text-align: center;
+    color: var(--success);
+    font-variant-numeric: tabular-nums;
+    margin: 12px 0;
+  }
+  .timer-display.warning { color: var(--accent); animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: 0.5; } }
+
+  #gameArea {
+    position: relative;
+    width: 100%;
+    height: clamp(320px, 60vh, 420px);
+    background: linear-gradient(180deg, #0a0a1e 0%, #1a1a3e 100%);
+    border-radius: 14px;
+    overflow: hidden;
+    touch-action: none;
+    border: 1px solid var(--accent-border);
+  }
+  #gameCanvas { display: block; width: 100%; height: 100%; }
+  .game-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: rgba(0, 0, 0, 0.78);
+    z-index: 10; text-align: center;
+    padding: 20px;
+  }
+  .game-overlay.hidden { display: none; }
+  .game-overlay h2 { color: var(--accent); font-size: clamp(20px, 5.5vw, 24px); margin-bottom: 8px; }
+  .game-overlay p { color: #a0a0b0; font-size: clamp(12px, 3.3vw, 13px); margin-bottom: 16px; line-height: 1.5; }
+  .game-hud {
+    position: absolute; top: 8px; left: 8px; right: 8px;
+    display: flex; justify-content: space-between; z-index: 5;
+    font-size: clamp(10px, 2.8vw, 11px); font-weight: 700;
+    pointer-events: none; flex-wrap: wrap; gap: 4px;
+  }
+  .hud-left, .hud-right { display: flex; gap: 4px; flex-wrap: wrap; }
+  .hud-item { background: rgba(0,0,0,0.65); padding: 3px 8px; border-radius: 20px; color: white; }
+  .hud-score { color: #4ecca3; }
+  .hud-life { color: #e94560; }
+  .hud-level { color: #ffdd00; }
+  .hud-high { color: #a855f7; }
+  .hud-shield { color: #3b82f6; display: none; }
+  .hud-shield.active { display: inline-block; animation: pulse 1s infinite; }
+  .hud-triple { color: #f97316; display: none; }
+  .hud-triple.active { display: inline-block; animation: pulse 1s infinite; }
+
+  #toast {
+    position: fixed;
+    bottom: calc(90px + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--accent);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 24px;
+    font-size: clamp(12px, 3.3vw, 13px);
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 1000;
+    box-shadow: 0 4px 20px var(--accent-shadow);
+    pointer-events: none;
+    text-align: center;
+    max-width: 90vw;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  .empty-hint { text-align: center; color: var(--text-muted); font-size: clamp(12px, 3.3vw, 13px); padding: 20px; }
+  .ring-preview { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-card {
+    background: var(--bg-1);
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+    color: var(--text);
+  }
+
+  @media (max-width: 360px) {
+    .tab-btn { font-size: 10px; padding: 8px 2px; }
+    .clock-time { font-size: 30px; }
+    .app-title-main { font-size: 16px; }
+  }
+  @media (max-height: 500px) and (orientation: landscape) {
+    #gameArea { height: 240px; }
+    .app { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR: tombol tema -->
+  <div class="top-bar">
+    <button class="icon-btn" id="themeToggle" type="button" title="Dark/Light Mode">🌙</button>
+    <button class="icon-btn" id="colorToggle" type="button" title="Ganti Warna">🎨</button>
+  </div>
+
+  <!-- PANEL PILIH WARNA -->
+  <div class="theme-panel" id="themePanel">
+    <h4>Warna Tema</h4>
+    <div class="color-grid" id="colorGrid">
+      <button class="color-swatch" data-color="red"    style="background:#e94560" type="button" title="Merah"></button>
+      <button class="color-swatch" data-color="blue"   style="background:#3b82f6" type="button" title="Biru"></button>
+      <button class="color-swatch" data-color="green"  style="background:#10b981" type="button" title="Hijau"></button>
+      <button class="color-swatch" data-color="purple" style="background:#a855f7" type="button" title="Ungu"></button>
+      <button class="color-swatch" data-color="orange" style="background:#f97316" type="button" title="Oranye"></button>
+    </div>
+  </div>
+
+  <!-- JUDUL DI ATAS JAM -->
+  <div class="app-title-header">
+    <div class="app-title-main">MY Xteins</div>
+    <div class="app-title-sub">Landing Page</div>
+  </div>
+
+  <!-- JAM -->
+  <div class="clock-header">
+    <div class="clock-time" id="clockTime">00:00:00</div>
+    <div class="clock-date" id="clockDate">-</div>
+    <div class="alarm-status off" id="alarmStatus">🔔 Alarm nonaktif</div>
+  </div>
+
+  <!-- TAB -->
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="diary" type="button">📔 Harian</button>
+    <button class="tab-btn" data-tab="alarm" type="button">⏰ Alarm</button>
+    <button class="tab-btn" data-tab="timer" type="button">⏳ Timer</button>
+    <button class="tab-btn" data-tab="game" type="button">🚀 Game</button>
+  </div>
+
+  <!-- PANEL DIARY -->
+  <div class="panel active" id="panel-diary">
+
+    <div class="card">
+      <h3>📊 Statistik</h3>
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-num" id="statTotal">0</div>
+          <div class="stat-label">Catatan</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="statWords">0</div>
+          <div class="stat-label">Kata</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="statStreak">0</div>
+          <div class="stat-label">Streak 🔥</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📝 Tulis Daily Note</h3>
+
+      <label>Mood (opsional)</label>
+      <div class="mood-row" id="moodRow">
+        <button class="mood-btn" data-mood="😊" type="button" title="Senang">😊</button>
+        <button class="mood-btn" data-mood="😢" type="button" title="Sedih">😢</button>
+        <button class="mood-btn" data-mood="😡" type="button" title="Marah">😡</button>
+        <button class="mood-btn" data-mood="😴" type="button" title="Lelah">😴</button>
+        <button class="mood-btn" data-mood="🤩" type="button" title="Semangat">🤩</button>
+        <button class="mood-btn" data-mood="😐" type="button" title="Biasa">😐</button>
+      </div>
+
+      <label>Kategori (opsional)</label>
+      <div class="tag-row" id="tagRow">
+        <button class="tag-btn" data-tag="Pribadi" type="button">Pribadi</button>
+        <button class="tag-btn" data-tag="Kerja" type="button">Kerja</button>
+        <button class="tag-btn" data-tag="Ide" type="button">Ide</button>
+        <button class="tag-btn" data-tag="Belanja" type="button">Belanja</button>
+        <button class="tag-btn" data-tag="Kesehatan" type="button">Kesehatan</button>
+      </div>
+
+      <textarea class="diary-input" id="diaryInput" placeholder="Apa yang terjadi hari ini..."></textarea>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="saveDiary" type="button" style="flex:1;margin-top:8px">💾 Simpan</button>
+        <button class="btn btn-secondary" id="cancelEdit" type="button" style="flex:1;margin-top:8px;display:none">✖️ Batal Edit</button>
+      </div>
+      <div id="editIndicator" style="display:none;margin-top:8px;font-size:12px;color:var(--accent);font-weight:600;text-align:center">
+        ✏️ Sedang mengedit catatan
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="justify-content:space-between">
+        <span>📚 Catatan Tersimpan</span>
+        <button id="clearAllNotes" type="button"
+          style="font-size:11px;padding:4px 10px;background:var(--accent-soft);
+          color:var(--accent);border:1px solid var(--accent-border);border-radius:6px;
+          cursor:pointer;font-family:inherit;font-weight:600">
+          🗑️ Hapus Semua
+        </button>
+      </h3>
+
+      <div class="diary-toolbar">
+        <button id="exportNotes" type="button">📤 Export</button>
+        <button id="importNotes" type="button">📥 Import</button>
+        <button id="clearFilter" type="button">🔄 Reset Filter</button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:11px;color:var(--text-dim);font-weight:600">Font:</span>
+        <div class="font-sizes">
+          <button class="font-size-btn" data-size="small" type="button" style="font-size:11px">A</button>
+          <button class="font-size-btn active" data-size="medium" type="button" style="font-size:13px">A</button>
+          <button class="font-size-btn" data-size="large" type="button" style="font-size:16px">A</button>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <input class="search-input" id="searchNotes" type="text" placeholder="🔍 Cari catatan...">
+        <button class="search-clear" id="searchClear" type="button">✕</button>
+      </div>
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-filter="all" type="button">Semua</button>
+        <button class="filter-tab" data-filter="pinned" type="button">📌 Dipin</button>
+        <button class="filter-tab" data-filter="Pribadi" type="button">Pribadi</button>
+        <button class="filter-tab" data-filter="Kerja" type="button">Kerja</button>
+        <button class="filter-tab" data-filter="Ide" type="button">Ide</button>
+        <button class="filter-tab" data-filter="Belanja" type="button">Belanja</button>
+        <button class="filter-tab" data-filter="Kesehatan" type="button">Kesehatan</button>
+      </div>
+
+      <div id="diaryList"><div class="empty-hint">Belum ada catatan. Mulai tulis!</div></div>
+    </div>
+
+    <input type="file" id="importFile" accept=".json" style="display:none">
+  </div>
+
+  <!-- PANEL ALARM -->
+  <div class="panel" id="panel-alarm">
+    <div class="card">
+      <h3>⏰ Atur Alarm</h3>
+      <label>Waktu Alarm</label>
+      <input type="time" id="alarmTime" value="07:00">
+      <label>Nada Dering</label>
+      <select id="ringtoneSelect">
+        <option value="beep">Beep Klasik</option>
+        <option value="digital">Digital</option>
+        <option value="chime">Chime Lembut</option>
+        <option value="siren">Sirine</option>
+        <option value="melody">Melodi</option>
+      </select>
+      <div class="ring-preview">
+        <button class="btn btn-secondary btn-sm" id="testRing" type="button">🔊 Coba Nada</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="setAlarm" type="button">🔔 Aktifkan Alarm</button>
+        <button class="btn btn-secondary" id="stopAlarm" type="button">🔕 Matikan</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>ℹ️ Info</h3>
+      <p style="font-size:13px;color:var(--text-dim);line-height:1.6">
+        Alarm akan berbunyi saat jam mencapai waktu yang ditentukan.
+        Pastikan tab ini tetap terbuka. Nada dering diputar berulang sampai dimatikan.
+      </p>
+    </div>
+  </div>
+
+  <!-- PANEL TIMER -->
+  <div class="panel" id="panel-timer">
+    <div class="card">
+      <h3>⏳ Penghitung Waktu Mundur</h3>
+      <div class="timer-display" id="timerDisplay">00:00</div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1">
+          <label>Menit</label>
+          <input type="number" id="timerMin" value="5" min="0" max="99">
+        </div>
+        <div style="flex:1">
+          <label>Detik</label>
+          <input type="number" id="timerSec" value="0" min="0" max="59">
+        </div>
+      </div>
+      <label>Nada saat selesai</label>
+      <select id="timerRingtone">
+        <option value="beep">Beep Klasik</option>
+        <option value="digital">Digital</option>
+        <option value="chime">Chime Lembut</option>
+        <option value="siren">Sirine</option>
+        <option value="melody">Melodi</option>
+      </select>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="startTimer" type="button">▶️ Mulai</button>
+        <button class="btn btn-secondary" id="pauseTimer" type="button">⏸️ Pause</button>
+        <button class="btn btn-danger" id="resetTimer" type="button">🔄 Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL GAME -->
+  <div class="panel" id="panel-game">
+    <div class="card" style="padding:8px">
+      <div id="gameArea">
+        <div class="game-hud">
+          <div class="hud-left">
+            <div class="hud-item hud-score">Skor: <span id="score">0</span></div>
+            <div class="hud-item hud-level">Lv <span id="level">1</span></div>
+            <div class="hud-item hud-high">🏆 <span id="highScore">0</span></div>
+          </div>
+          <div class="hud-right">
+            <div class="hud-item hud-shield" id="shieldHud">🛡️ <span id="shieldTime">0</span></div>
+            <div class="hud-item hud-triple" id="tripleHud">🔫 <span id="tripleTime">0</span></div>
+            <div class="hud-item hud-life">❤️ <span id="lives">3</span></div>
+          </div>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div class="game-overlay" id="gameOverlay">
+          <h2 id="overlayTitle">🚀 Pesawat Tempur</h2>
+          <p id="overlayText">Geser jari untuk menggerakkan pesawat.<br>Pesawat menembak otomatis.<br>Kumpulkan power-up & kalahkan boss!</p>
+          <button class="btn btn-primary" id="startGameBtn" type="button">▶️ Mulai Bermain</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ============================================================
+// UTIL
+// ============================================================
+function $(id) { return document.getElementById(id); }
+
+var toastTimer = null;
+function toast(msg) {
+  var t = $('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2200);
+}
+
+// ============================================================
+// TEMA & MODE
+// ============================================================
+var THEMES = {
+  red:    { accent: '#e94560', soft: 'rgba(233,69,96,0.15)',  border: 'rgba(233,69,96,0.4)',  shadow: 'rgba(233,69,96,0.5)',  glow: 'rgba(233,69,96,0.2)' },
+  blue:   { accent: '#3b82f6', soft: 'rgba(59,130,246,0.15)', border: 'rgba(59,130,246,0.4)', shadow: 'rgba(59,130,246,0.5)', glow: 'rgba(59,130,246,0.2)' },
+  green:  { accent: '#10b981', soft: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.4)', shadow: 'rgba(16,185,129,0.5)', glow: 'rgba(16,185,129,0.2)' },
+  purple: { accent: '#a855f7', soft: 'rgba(168,85,247,0.15)', border: 'rgba(168,85,247,0.4)', shadow: 'rgba(168,85,247,0.5)', glow: 'rgba(168,85,247,0.2)' },
+  orange: { accent: '#f97316', soft: 'rgba(249,115,22,0.15)', border: 'rgba(249,115,22,0.4)', shadow: 'rgba(249,115,22,0.5)', glow: 'rgba(249,115,22,0.2)' }
+};
+
+var currentTheme = 'red';
+var currentMode = 'dark';
+
+function loadThemeSettings() {
+  try {
+    var th = localStorage.getItem('themeColor');
+    if (th && THEMES[th]) currentTheme = th;
+    var md = localStorage.getItem('themeMode');
+    if (md === 'light' || md === 'dark') currentMode = md;
+  } catch (e) {}
+}
+
+function saveThemeSettings() {
+  try {
+    localStorage.setItem('themeColor', currentTheme);
+    localStorage.setItem('themeMode', currentMode);
+  } catch (e) {}
+}
+
+function applyTheme() {
+  var t = THEMES[currentTheme] || THEMES.red;
+  var root = document.documentElement;
+  root.style.setProperty('--accent', t.accent);
+  root.style.setProperty('--accent-soft', t.soft);
+  root.style.setProperty('--accent-border', t.border);
+  root.style.setProperty('--accent-shadow', t.shadow);
+  root.style.setProperty('--accent-glow', t.glow);
+
+  if (currentMode === 'light') {
+    document.body.classList.add('light-mode');
+  } else {
+    document.body.classList.remove('light-mode');
+  }
+
+  var modeBtn = $('themeToggle');
+  if (modeBtn) modeBtn.textContent = currentMode === 'light' ? '☀️' : '🌙';
+
+  var metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) {
+    metaTheme.setAttribute('content', currentMode === 'light' ? '#f5f5f7' : t.accent);
+  }
+
+  var swatches = document.querySelectorAll('.color-swatch');
+  for (var i = 0; i < swatches.length; i++) {
+    if (swatches[i].getAttribute('data-color') === currentTheme) {
+      swatches[i].classList.add('active');
+    } else {
+      swatches[i].classList.remove('active');
+    }
+  }
+}
+
+function initThemeUI() {
+  loadThemeSettings();
+  applyTheme();
+
+  var modeBtn = $('themeToggle');
+  if (modeBtn) modeBtn.onclick = function() {
+    currentMode = (currentMode === 'dark') ? 'light' : 'dark';
+    applyTheme();
+    saveThemeSettings();
+    toast(currentMode === 'light' ? '☀️ Light mode' : '🌙 Dark mode');
+  };
+
+  var colorBtn = $('colorToggle');
+  var colorPanel = $('themePanel');
+  if (colorBtn && colorPanel) {
+    colorBtn.onclick = function() { colorPanel.classList.toggle('open'); };
+  }
+
+  var swatches = document.querySelectorAll('.color-swatch');
+  for (var i = 0; i < swatches.length; i++) {
+    swatches[i].onclick = function() {
+      var c = this.getAttribute('data-color');
+      if (THEMES[c]) {
+        currentTheme = c;
+        applyTheme();
+        saveThemeSettings();
+        toast('🎨 Warna tema diubah');
+      }
+    };
+  }
+}
+
+// ============================================================
+// AUDIO
+// ============================================================
+var audioCtx = null;
+function getAudioCtx() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  } catch (e) { console.warn('AudioContext gagal:', e); return null; }
+}
+
+function playSaveSound() {
+  try {
+    var ctx = getAudioCtx(); if (!ctx) return;
+    var now = ctx.currentTime;
+    var notes = [
+      { freq: 1046.50, time: 0,    dur: 0.12 },
+      { freq: 1318.51, time: 0.10, dur: 0.12 },
+      { freq: 1567.98, time: 0.20, dur: 0.28 }
+    ];
+    for (var i = 0; i < notes.length; i++) {
+      var n = notes[i];
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = n.freq;
+      var t = now + n.time;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.25, t + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + n.dur);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + n.dur + 0.05);
+    }
+  } catch (e) {}
+}
+
+function playDeleteSound() {
+  try {
+    var ctx = getAudioCtx(); if (!ctx) return;
+    var now = ctx.currentTime;
+    var osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(200, now + 0.2);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(now); osc.stop(now + 0.3);
+  } catch (e) {}
+}
+
+// ============================================================
+// RINGTONE
+// ============================================================
+var ringtones = {
+  beep:    { notes: [[880, 0.15], [0, 0.1], [880, 0.15], [0, 0.1], [880, 0.15]], type: 'square' },
+  digital: { notes: [[1200, 0.08], [0, 0.05], [1200, 0.08], [0, 0.05], [1200, 0.08], [0, 0.3]], type: 'square' },
+  chime:   { notes: [[523.25, 0.3], [659.25, 0.3], [783.99, 0.3], [1046.5, 0.5]], type: 'sine' },
+  siren:   { notes: [[600, 0.25], [900, 0.25], [600, 0.25], [900, 0.25]], type: 'sawtooth' },
+  melody:  { notes: [[523.25, 0.2], [587.33, 0.2], [659.25, 0.2], [783.99, 0.2], [659.25, 0.2], [783.99, 0.4]], type: 'triangle' }
+};
+
+var activeRing = null;
+
+function playRingtone(name, loop) {
+  if (loop === undefined) loop = true;
+  stopRingtone();
+  var ctx = getAudioCtx(); if (!ctx) return;
+  var ring = ringtones[name] || ringtones.beep;
+  var stopped = false, nodes = [], timer = null;
+
+  function playSequence() {
+    if (stopped) return;
+    var t = ctx.currentTime;
+    for (var i = 0; i < ring.notes.length; i++) {
+      var freq = ring.notes[i][0], dur = ring.notes[i][1];
+      if (freq > 0) {
+        var osc = ctx.createOscillator(), gain = ctx.createGain();
+        osc.type = ring.type; osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(0.3, t + 0.01);
+        gain.gain.setValueAtTime(0.3, t + dur - 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(t); osc.stop(t + dur);
+        nodes.push(osc);
+      }
+      t += dur;
+    }
+    var totalDur = 0;
+    for (var j = 0; j < ring.notes.length; j++) totalDur += ring.notes[j][1];
+    if (loop && !stopped) timer = setTimeout(playSequence, totalDur * 1000 + 200);
+  }
+
+  activeRing = { nodes: nodes, setStopped: function() { stopped = true; if (timer) clearTimeout(timer); } };
+  playSequence();
+}
+
+function stopRingtone() {
+  if (activeRing) {
+    activeRing.setStopped();
+    for (var i = 0; i < activeRing.nodes.length; i++) { try { activeRing.nodes[i].stop(); } catch (e) {} }
+    activeRing = null;
+  }
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function initTabs() {
+  var tabs = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].onclick = function() {
+      var all = document.querySelectorAll('.tab-btn');
+      for (var j = 0; j < all.length; j++) all[j].classList.remove('active');
+      var panels = document.querySelectorAll('.panel');
+      for (var k = 0; k < panels.length; k++) panels[k].classList.remove('active');
+      this.classList.add('active');
+      var target = document.getElementById('panel-' + this.getAttribute('data-tab'));
+      if (target) target.classList.add('active');
+      if (this.getAttribute('data-tab') === 'game') setTimeout(resizeGame, 50);
+    };
+  }
+}
+
+// ============================================================
+// JAM
+// ============================================================
+function updateClock() {
+  var now = new Date();
+  var hh = String(now.getHours()).padStart(2, '0');
+  var mm = String(now.getMinutes()).padStart(2, '0');
+  var ss = String(now.getSeconds()).padStart(2, '0');
+  var elTime = $('clockTime');
+  if (elTime) elTime.textContent = hh + ':' + mm + ':' + ss;
+
+  var days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  var months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  var elDate = $('clockDate');
+  if (elDate) elDate.textContent = days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+
+  checkAlarm(hh, mm, ss);
+}
+
+// ============================================================
+// ALARM
+// ============================================================
+var alarm = { active: false, time: null, triggered: false, ringtone: 'beep' };
+
+function initAlarm() {
+  var setBtn = $('setAlarm');
+  if (setBtn) setBtn.onclick = function() {
+    var t = $('alarmTime').value;
+    if (!t) { toast('Pilih waktu alarm dulu!'); return; }
+    alarm.active = true; alarm.time = t; alarm.triggered = false;
+    alarm.ringtone = $('ringtoneSelect').value;
+    var s = $('alarmStatus');
+    s.textContent = '🔔 Alarm aktif pada ' + t;
+    s.classList.remove('off');
+    toast('Alarm diatur untuk ' + t);
+  };
+
+  var stopBtn = $('stopAlarm');
+  if (stopBtn) stopBtn.onclick = function() {
+    alarm.active = false; alarm.triggered = false;
+    stopRingtone();
+    var s = $('alarmStatus');
+    s.textContent = '🔔 Alarm nonaktif';
+    s.classList.add('off');
+    toast('Alarm dimatikan');
+  };
+
+  var testBtn = $('testRing');
+  if (testBtn) testBtn.onclick = function() {
+    playRingtone($('ringtoneSelect').value, false);
+    toast('Memutar nada...');
+  };
+}
+
+function checkAlarm(hh, mm, ss) {
+  if (!alarm.active || alarm.triggered) return;
+  if (hh + ':' + mm === alarm.time && ss === '00') {
+    alarm.triggered = true;
+    triggerAlarm();
+  }
+}
+
+function triggerAlarm() {
+  playRingtone(alarm.ringtone, true);
+  var s = $('alarmStatus');
+  if (s) s.textContent = '⏰ ALARM BERBUNYI!';
+  showAlarmModal();
+}
+
+function showAlarmModal() {
+  var modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  modal.innerHTML =
+    '<div class="modal-card">' +
+      '<div style="font-size:60px;margin-bottom:16px">⏰</div>' +
+      '<h2 style="color:var(--accent);font-size:22px;margin-bottom:8px">Alarm!</h2>' +
+      '<p style="color:var(--text-dim);margin-bottom:20px">Waktunya ' + alarm.time + '</p>' +
+      '<button id="dismissAlarm" type="button" class="btn btn-primary" style="width:100%">Matikan Alarm</button>' +
+    '</div>';
+  document.body.appendChild(modal);
+  $('dismissAlarm').onclick = function() {
+    stopRingtone(); modal.remove();
+    alarm.active = false; alarm.triggered = false;
+    var s = $('alarmStatus');
+    s.textContent = '🔔 Alarm nonaktif';
+    s.classList.add('off');
+  };
+}
+
+// ============================================================
+// DIARY
+// ============================================================
+var diaryEntries = [];
+var currentEditIndex = -1;
+var currentMood = null;
+var currentTag = null;
+var currentFilter = 'all';
+var currentSearch = '';
+var currentFontSize = 'medium';
+
+function loadDiary() {
+  try {
+    var raw = localStorage.getItem('diaryEntries');
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) diaryEntries = parsed;
+    }
+    var fs = localStorage.getItem('noteFontSize');
+    if (fs === 'small' || fs === 'medium' || fs === 'large') currentFontSize = fs;
+  } catch (e) { diaryEntries = []; }
+}
+
+function saveDiaryToStorage() {
+  try { localStorage.setItem('diaryEntries', JSON.stringify(diaryEntries)); } catch (e) {}
+}
+
+function saveFontSize() {
+  try { localStorage.setItem('noteFontSize', currentFontSize); } catch (e) {}
+}
+
+function applyFontSize() {
+  var sizes = { small: '12px', medium: '13px', large: '16px' };
+  document.documentElement.style.setProperty('--note-font', sizes[currentFontSize] || '13px');
+  var btns = document.querySelectorAll('.font-size-btn');
+  for (var i = 0; i < btns.length; i++) {
+    if (btns[i].getAttribute('data-size') === currentFontSize) {
+      btns[i].classList.add('active');
+    } else {
+      btns[i].classList.remove('active');
+    }
+  }
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function getFilteredEntries() {
+  var result = diaryEntries.map(function(e, i) {
+    return { entry: e, idx: i };
+  });
+
+  if (currentFilter === 'pinned') {
+    result = result.filter(function(x) { return x.entry.pinned; });
+  } else if (currentFilter !== 'all') {
+    result = result.filter(function(x) { return x.entry.tag === currentFilter; });
+  }
+
+  if (currentSearch) {
+    var q = currentSearch.toLowerCase();
+    result = result.filter(function(x) {
+      return (x.entry.text || '').toLowerCase().indexOf(q) !== -1 ||
+             (x.entry.tag || '').toLowerCase().indexOf(q) !== -1 ||
+             (x.entry.date || '').toLowerCase().indexOf(q) !== -1;
+    });
+  }
+
+  result.sort(function(a, b) {
+    if (!!b.entry.pinned !== !!a.entry.pinned) return b.entry.pinned ? 1 : -1;
+    return (b.entry.ts || 0) - (a.entry.ts || 0);
+  });
+
+  return result;
+}
+
+function updateStats() {
+  var total = diaryEntries.length;
+  var words = 0;
+  for (var i = 0; i < diaryEntries.length; i++) {
+    var t = (diaryEntries[i].text || '').trim();
+    if (t) words += t.split(/\s+/).length;
+  }
+
+  var dates = {};
+  for (var j = 0; j < diaryEntries.length; j++) {
+    var ts = diaryEntries[j].ts;
+    if (ts) {
+      var d = new Date(ts);
+      var key = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+      dates[key] = true;
+    }
+  }
+  var streak = 0;
+  var today = new Date();
+  for (var k = 0; k < 365; k++) {
+    var dd = new Date(today);
+    dd.setDate(dd.getDate() - k);
+    var kk = dd.getFullYear() + '-' + (dd.getMonth()+1) + '-' + dd.getDate();
+    if (dates[kk]) streak++; else break;
+  }
+
+  var e1 = $('statTotal'); if (e1) e1.textContent = total;
+  var e2 = $('statWords'); if (e2) e2.textContent = words;
+  var e3 = $('statStreak'); if (e3) e3.textContent = streak;
+}
+
+function renderDiary() {
+  var list = $('diaryList');
+  if (!list) return;
+
+  var filtered = getFilteredEntries();
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-hint">' +
+      (diaryEntries.length === 0 ? 'Belum ada catatan. Mulai tulis!' : 'Tidak ada catatan yang cocok dengan filter.') +
+      '</div>';
+    updateStats();
+    return;
+  }
+
+  var html = '';
+  for (var i = 0; i < filtered.length; i++) {
+    var e = filtered[i].entry;
+    var idx = filtered[i].idx;
+    var isPinned = !!e.pinned;
+    var mood = e.mood || '';
+    var tag = e.tag || '';
+
+    html += '<div class="entry' + (isPinned ? ' pinned' : '') + '">' +
+      '<div class="entry-header">' +
+        (mood ? '<span class="entry-mood">' + escapeHtml(mood) + '</span>' : '') +
+        '<span class="entry-date">' + escapeHtml(e.date) + '</span>' +
+        (isPinned ? '<span class="entry-pin">📌</span>' : '') +
+        (tag ? '<span class="entry-tag">' + escapeHtml(tag) + '</span>' : '') +
+      '</div>' +
+      '<div class="entry-text">' + escapeHtml(e.text) + '</div>' +
+      '<div class="entry-actions">' +
+        '<button class="btn-edit" data-index="' + idx + '" type="button">✏️ Edit</button>' +
+        '<button class="btn-pin" data-index="' + idx + '" type="button">' + (isPinned ? '📌 Unpin' : '📌 Pin') + '</button>' +
+        '<button class="btn-del" data-index="' + idx + '" type="button">🗑️ Hapus</button>' +
+      '</div>' +
+    '</div>';
+  }
+  list.innerHTML = html;
+  updateStats();
+}
+
+function handleSaveDiary() {
+  var input = $('diaryInput');
+  if (!input) return;
+  var text = input.value.trim();
+  if (!text) { toast('Tulis sesuatu dulu!'); return; }
+
+  var now = new Date();
+  var dateStr = now.toLocaleString('id-ID', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+
+  if (currentEditIndex >= 0 && currentEditIndex < diaryEntries.length) {
+    var old = diaryEntries[currentEditIndex];
+    diaryEntries[currentEditIndex] = {
+      date: old.date,
+      text: text,
+      ts: old.ts,
+      mood: currentMood || old.mood || '',
+      tag: currentTag || old.tag || '',
+      pinned: old.pinned || false,
+      editedAt: now.getTime()
+    };
+    toast('✏️ Catatan diperbarui');
+    cancelEditMode();
+  } else {
+    diaryEntries.unshift({
+      date: dateStr,
+      text: text,
+      ts: now.getTime(),
+      mood: currentMood || '',
+      tag: currentTag || '',
+      pinned: false
+    });
+    toast('✅ Daily Note Tersimpan');
+  }
+
+  saveDiaryToStorage();
+  renderDiary();
+  input.value = '';
+  currentMood = null;
+  currentTag = null;
+  updateMoodUI();
+  updateTagUI();
+  playSaveSound();
+}
+
+function startEditNote(idx) {
+  if (idx < 0 || idx >= diaryEntries.length) return;
+  var e = diaryEntries[idx];
+  currentEditIndex = idx;
+  $('diaryInput').value = e.text;
+  currentMood = e.mood || null;
+  currentTag = e.tag || null;
+  updateMoodUI();
+  updateTagUI();
+  $('cancelEdit').style.display = 'block';
+  $('editIndicator').style.display = 'block';
+  $('diaryInput').focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  toast('✏️ Mode edit aktif');
+}
+
+function cancelEditMode() {
+  currentEditIndex = -1;
+  currentMood = null;
+  currentTag = null;
+  $('diaryInput').value = '';
+  $('cancelEdit').style.display = 'none';
+  $('editIndicator').style.display = 'none';
+  updateMoodUI();
+  updateTagUI();
+}
+
+function deleteNote(idx) {
+  if (idx < 0 || idx >= diaryEntries.length) return;
+  var preview = diaryEntries[idx].text;
+  if (preview.length > 100) preview = preview.substring(0, 100) + '...';
+
+  var modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  modal.innerHTML =
+    '<div class="modal-card">' +
+      '<div style="font-size:48px;margin-bottom:12px">🗑️</div>' +
+      '<h3 style="color:var(--accent);font-size:18px;margin-bottom:12px">Hapus Catatan?</h3>' +
+      '<p style="color:var(--text-dim);font-size:13px;line-height:1.5;margin-bottom:20px;max-height:120px;overflow-y:auto;text-align:left;background:var(--input-bg);padding:10px;border-radius:8px;">' +
+        escapeHtml(preview) + '</p>' +
+      '<div style="display:flex;gap:10px;">' +
+        '<button id="confirmNo" type="button" class="btn btn-secondary" style="flex:1;margin:0">Batal</button>' +
+        '<button id="confirmYes" type="button" class="btn btn-primary" style="flex:1;margin:0">Hapus</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(modal);
+
+  $('confirmNo').onclick = function() { modal.remove(); };
+  $('confirmYes').onclick = function() {
+    modal.remove();
+    diaryEntries.splice(idx, 1);
+    saveDiaryToStorage();
+    renderDiary();
+    playDeleteSound();
+    toast('🗑️ Catatan dihapus');
+  };
+}
+
+function togglePinNote(idx) {
+  if (idx < 0 || idx >= diaryEntries.length) return;
+  diaryEntries[idx].pinned = !diaryEntries[idx].pinned;
+  saveDiaryToStorage();
+  renderDiary();
+  toast(diaryEntries[idx].pinned ? '📌 Dipin' : '📌 Unpin');
+}
+
+function showClearAllConfirm() {
+  var modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  modal.innerHTML =
+    '<div class="modal-card">' +
+      '<div style="font-size:48px;margin-bottom:12px">⚠️</div>' +
+      '<h3 style="color:var(--accent);font-size:18px;margin-bottom:12px">Hapus Semua?</h3>' +
+      '<p style="color:var(--text-dim);font-size:13px;line-height:1.5;margin-bottom:20px;">Semua <b>' +
+        diaryEntries.length + '</b> catatan akan dihapus permanen.</p>' +
+      '<div style="display:flex;gap:10px;">' +
+        '<button id="clearNo" type="button" class="btn btn-secondary" style="flex:1;margin:0">Batal</button>' +
+        '<button id="clearYes" type="button" class="btn btn-danger" style="flex:1;margin:0">Hapus</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(modal);
+
+  $('clearNo').onclick = function() { modal.remove(); };
+  $('clearYes').onclick = function() {
+    modal.remove();
+    diaryEntries = [];
+    saveDiaryToStorage();
+    renderDiary();
+    playDeleteSound();
+    toast('🗑️ Semua catatan dihapus');
+  };
+}
+
+function exportNotes() {
+  if (diaryEntries.length === 0) { toast('Tidak ada catatan untuk di-export'); return; }
+  try {
+    var data = JSON.stringify(diaryEntries, null, 2);
+    var blob = new Blob([data], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'buku-harian-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('📤 Catatan di-export');
+  } catch (e) {
+    toast('Gagal export');
+  }
+}
+
+function importNotes(file) {
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var parsed = JSON.parse(ev.target.result);
+      if (!Array.isArray(parsed)) throw new Error('Format salah');
+      if (!confirm('Import ' + parsed.length + ' catatan? Data lama akan digabung.')) return;
+      var existingTs = {};
+      for (var i = 0; i < diaryEntries.length; i++) {
+        if (diaryEntries[i].ts) existingTs[diaryEntries[i].ts] = true;
+      }
+      var added = 0;
+      for (var j = 0; j < parsed.length; j++) {
+        var n = parsed[j];
+        if (!n.ts || !existingTs[n.ts]) {
+          diaryEntries.push(n);
+          added++;
+        }
+      }
+      saveDiaryToStorage();
+      renderDiary();
+      toast('📥 ' + added + ' catatan diimport');
+    } catch (e) {
+      toast('File tidak valid');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function updateMoodUI() {
+  var btns = document.querySelectorAll('.mood-btn');
+  for (var i = 0; i < btns.length; i++) {
+    if (btns[i].getAttribute('data-mood') === currentMood) {
+      btns[i].classList.add('active');
+    } else {
+      btns[i].classList.remove('active');
+    }
+  }
+}
+
+function updateTagUI() {
+  var btns = document.querySelectorAll('.tag-btn');
+  for (var i = 0; i < btns.length; i++) {
+    if (btns[i].getAttribute('data-tag') === currentTag) {
+      btns[i].classList.add('active');
+    } else {
+      btns[i].classList.remove('active');
+    }
+  }
+}
+
+function initDiary() {
+  loadDiary();
+  applyFontSize();
+  renderDiary();
+
+  var saveBtn = $('saveDiary');
+  if (saveBtn) saveBtn.onclick = handleSaveDiary;
+
+  var cancelBtn = $('cancelEdit');
+  if (cancelBtn) cancelBtn.onclick = cancelEditMode;
+
+  var moodBtns = document.querySelectorAll('.mood-btn');
+  for (var i = 0; i < moodBtns.length; i++) {
+    moodBtns[i].onclick = function() {
+      var m = this.getAttribute('data-mood');
+      currentMood = (currentMood === m) ? null : m;
+      updateMoodUI();
+    };
+  }
+
+  var tagBtns = document.querySelectorAll('.tag-btn');
+  for (var j = 0; j < tagBtns.length; j++) {
+    tagBtns[j].onclick = function() {
+      var t = this.getAttribute('data-tag');
+      currentTag = (currentTag === t) ? null : t;
+      updateTagUI();
+    };
+  }
+
+  var fsBtns = document.querySelectorAll('.font-size-btn');
+  for (var k = 0; k < fsBtns.length; k++) {
+    fsBtns[k].onclick = function() {
+      currentFontSize = this.getAttribute('data-size');
+      applyFontSize();
+      saveFontSize();
+      toast('Font: ' + currentFontSize);
+    };
+  }
+
+  var searchInput = $('searchNotes');
+  var searchClear = $('searchClear');
+  if (searchInput) {
+    searchInput.oninput = function() {
+      currentSearch = this.value.trim();
+      if (searchClear) searchClear.classList.toggle('show', currentSearch.length > 0);
+      renderDiary();
+    };
+  }
+  if (searchClear) {
+    searchClear.onclick = function() {
+      searchInput.value = '';
+      currentSearch = '';
+      searchClear.classList.remove('show');
+      renderDiary();
+    };
+  }
+
+  var filterTabs = document.querySelectorAll('.filter-tab');
+  for (var m = 0; m < filterTabs.length; m++) {
+    filterTabs[m].onclick = function() {
+      currentFilter = this.getAttribute('data-filter');
+      var all = document.querySelectorAll('.filter-tab');
+      for (var n = 0; n < all.length; n++) all[n].classList.remove('active');
+      this.classList.add('active');
+      renderDiary();
+    };
+  }
+
+  var list = $('diaryList');
+  if (list) {
+    list.onclick = function(ev) {
+      var target = ev.target;
+      while (target && target !== list) {
+        if (target.classList) {
+          var idx = parseInt(target.getAttribute('data-index'), 10);
+          if (!isNaN(idx)) {
+            if (target.classList.contains('btn-edit')) { startEditNote(idx); return; }
+            if (target.classList.contains('btn-pin')) { togglePinNote(idx); return; }
+            if (target.classList.contains('btn-del')) { deleteNote(idx); return; }
+          }
+        }
+        target = target.parentNode;
+      }
+    };
+  }
+
+  var clearBtn = $('clearAllNotes');
+  if (clearBtn) {
+    clearBtn.onclick = function() {
+      if (diaryEntries.length === 0) { toast('Tidak ada catatan'); return; }
+      showClearAllConfirm();
+    };
+  }
+
+  var expBtn = $('exportNotes');
+  if (expBtn) expBtn.onclick = exportNotes;
+
+  var impBtn = $('importNotes');
+  var impFile = $('importFile');
+  if (impBtn && impFile) {
+    impBtn.onclick = function() { impFile.click(); };
+    impFile.onchange = function() {
+      if (this.files && this.files[0]) {
+        importNotes(this.files[0]);
+        this.value = '';
+      }
+    };
+  }
+
+  var resetBtn = $('clearFilter');
+  if (resetBtn) {
+    resetBtn.onclick = function() {
+      currentFilter = 'all';
+      currentSearch = '';
+      if (searchInput) searchInput.value = '';
+      if (searchClear) searchClear.classList.remove('show');
+      var all = document.querySelectorAll('.filter-tab');
+      for (var n = 0; n < all.length; n++) {
+        all[n].classList.toggle('active', all[n].getAttribute('data-filter') === 'all');
+      }
+      renderDiary();
+      toast('Filter direset');
+    };
+  }
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+var timer = { running: false, remaining: 0, total: 0, interval: null, endTs: 0 };
+
+function fmtTime(sec) {
+  var m = Math.floor(sec / 60), s = sec % 60;
+  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+
+function updateTimerDisplay() {
+  var d = $('timerDisplay');
+  if (!d) return;
+  d.textContent = fmtTime(timer.remaining);
+  d.classList.toggle('warning', timer.remaining <= 10 && timer.running && timer.remaining > 0);
+}
+
+function tickTimer() {
+  if (!timer.running) return;
+  var left = Math.max(0, Math.round((timer.endTs - Date.now()) / 1000));
+  timer.remaining = left;
+  updateTimerDisplay();
+  if (left <= 0) {
+    timer.running = false;
+    clearInterval(timer.interval);
+    playRingtone($('timerRingtone').value, true);
+    showTimerDoneModal();
+  }
+}
+
+function showTimerDoneModal() {
+  var modal = document.createElement('div');
+  modal.className = 'modal-backdrop';
+  modal.innerHTML =
+    '<div class="modal-card">' +
+      '<div style="font-size:60px;margin-bottom:16px">⏳</div>' +
+      '<h2 style="color:var(--success);font-size:22px;margin-bottom:8px">Waktu Habis!</h2>' +
+      '<p style="color:var(--text-dim);margin-bottom:20px">Timer telah selesai</p>' +
+      '<button id="dismissTimer" type="button" class="btn btn-primary" style="width:100%;background:var(--success);color:#0f3460">OK</button>' +
+    '</div>';
+  document.body.appendChild(modal);
+  $('dismissTimer').onclick = function() {
+    stopRingtone(); modal.remove();
+    timer.remaining = 0;
+    updateTimerDisplay();
+  };
+}
+
+function initTimer() {
+  var startBtn = $('startTimer');
+  if (startBtn) startBtn.onclick = function() {
+    if (timer.running) { toast('Timer sudah berjalan'); return; }
+    if (timer.remaining <= 0) {
+      var min = parseInt($('timerMin').value) || 0;
+      var sec = parseInt($('timerSec').value) || 0;
+      var total = min * 60 + sec;
+      if (total <= 0) { toast('Atur waktu dulu!'); return; }
+      timer.total = total; timer.remaining = total;
+    }
+    timer.running = true;
+    timer.endTs = Date.now() + timer.remaining * 1000;
+    updateTimerDisplay();
+    clearInterval(timer.interval);
+    timer.interval = setInterval(tickTimer, 200);
+    toast('Timer dimulai');
+  };
+
+  var pauseBtn = $('pauseTimer');
+  if (pauseBtn) pauseBtn.onclick = function() {
+    if (!timer.running) return;
+    timer.remaining = Math.max(0, Math.round((timer.endTs - Date.now()) / 1000));
+    timer.running = false;
+    clearInterval(timer.interval);
+    updateTimerDisplay();
+    toast('Timer dijeda');
+  };
+
+  var resetBtn = $('resetTimer');
+  if (resetBtn) resetBtn.onclick = function() {
+    timer.running = false;
+    clearInterval(timer.interval);
+    timer.remaining = 0; timer.total = 0;
+    stopRingtone();
+    updateTimerDisplay();
+    toast('Timer direset');
+  };
+}
+
+// ============================================================
+// GAME — Boss, Power-up, High Score, Level, SFX
+// ============================================================
+var canvas, ctx, ts = 0;
+var gameHighScore = 0;
+
+function loadHighScore() {
+  try {
+    var h = parseInt(localStorage.getItem('gameHighScore') || '0', 10);
+    if (!isNaN(h)) gameHighScore = h;
+  } catch (e) { gameHighScore = 0; }
+}
+
+function saveHighScore() {
+  try { localStorage.setItem('gameHighScore', String(gameHighScore)); } catch (e) {}
+}
+
+function playShootSound() {
+  try {
+    var ctxA = getAudioCtx(); if (!ctxA) return;
+    var now = ctxA.currentTime;
+    var osc = ctxA.createOscillator(), gain = ctxA.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(880, now);
+    osc.frequency.exponentialRampToValueAtTime(440, now + 0.08);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+    osc.connect(gain); gain.connect(ctxA.destination);
+    osc.start(now); osc.stop(now + 0.1);
+  } catch (e) {}
+}
+
+function playExplosionSound() {
+  try {
+    var ctxA = getAudioCtx(); if (!ctxA) return;
+    var now = ctxA.currentTime;
+    var bufSize = ctxA.sampleRate * 0.25;
+    var buffer = ctxA.createBuffer(1, bufSize, ctxA.sampleRate);
+    var data = buffer.getChannelData(0);
+    for (var i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+    var src = ctxA.createBufferSource(); src.buffer = buffer;
+    var gain = ctxA.createGain();
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+    src.connect(gain); gain.connect(ctxA.destination);
+    src.start(now);
+  } catch (e) {}
+}
+
+function playHitSound() {
+  try {
+    var ctxA = getAudioCtx(); if (!ctxA) return;
+    var now = ctxA.currentTime;
+    var osc = ctxA.createOscillator(), gain = ctxA.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(200, now);
+    osc.frequency.exponentialRampToValueAtTime(60, now + 0.3);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+    osc.connect(gain); gain.connect(ctxA.destination);
+    osc.start(now); osc.stop(now + 0.3);
+  } catch (e) {}
+}
+
+function playPowerupSound() {
+  try {
+    var ctxA = getAudioCtx(); if (!ctxA) return;
+    var now = ctxA.currentTime;
+    var freqs = [523, 659, 784, 1046];
+    for (var i = 0; i < freqs.length; i++) {
+      var osc = ctxA.createOscillator(), gain = ctxA.createGain();
+      osc.type = 'sine'; osc.frequency.value = freqs[i];
+      var t = now + i * 0.06;
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(0.2, t + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
+      osc.connect(gain); gain.connect(ctxA.destination);
+      osc.start(t); osc.stop(t + 0.12);
+    }
+  } catch (e) {}
+}
+
+var gameState = {
+  running: false, score: 0, lives: 3, level: 1,
+  player: { x: 0, y: 0, w: 34, h: 34 },
+  bullets: [], enemies: [], enemyBullets: [], particles: [],
+  powerups: [],
+  boss: null, nextBossScore: 500,
+  shieldUntil: 0, tripleUntil: 0,
+  lastShot: 0, lastEnemySpawn: 0,
+  rafId: null, dpr: 1, viewW: 480, viewH: 420, lastTime: 0
+};
+
+function resizeGame() {
+  if (!canvas) return;
+  var area = $('gameArea'); if (!area) return;
+  var rect = area.getBoundingClientRect();
+  if (rect.width === 0) return;
+  var dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  gameState.dpr = dpr;
+  gameState.viewW = rect.width;
+  gameState.viewH = rect.height;
+  var p = gameState.player;
+  if (p.x === 0 && p.y === 0) {
+    p.x = rect.width / 2 - p.w / 2;
+    p.y = rect.height - 60;
+  }
+  drawGame();
+}
+
+var dragging = false;
+
+function handlePointer(clientX, clientY) {
+  if (!gameState.running) return;
+  var rect = canvas.getBoundingClientRect();
+  var x = clientX - rect.left, y = clientY - rect.top;
+  var p = gameState.player;
+  p.x = Math.max(0, Math.min(gameState.viewW - p.w, x - p.w / 2));
+  p.y = Math.max(0, Math.min(gameState.viewH - p.h - 10, y - p.h / 2));
+}
+
+function initGame() {
+  canvas = $('gameCanvas'); if (!canvas) return;
+  ctx = canvas.getContext('2d');
+  loadHighScore();
+  updateHud();
+
+  canvas.addEventListener('touchstart', function(e) { e.preventDefault(); dragging = true; handlePointer(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  canvas.addEventListener('touchmove', function(e) { e.preventDefault(); if (!dragging) return; handlePointer(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+  canvas.addEventListener('touchend', function(e) { e.preventDefault(); dragging = false; }, { passive: false });
+  canvas.addEventListener('mousedown', function(e) { dragging = true; handlePointer(e.clientX, e.clientY); });
+  canvas.addEventListener('mousemove', function(e) { if (dragging) handlePointer(e.clientX, e.clientY); });
+  canvas.addEventListener('mouseup', function() { dragging = false; });
+  canvas.addEventListener('mouseleave', function() { dragging = false; });
+
+  var startBtn = $('startGameBtn');
+  if (startBtn) startBtn.onclick = function() { getAudioCtx(); startGame(); };
+
+  window.addEventListener('resize', resizeGame);
+  window.addEventListener('orientationchange', function() { setTimeout(resizeGame, 200); });
+  setTimeout(resizeGame, 100);
+}
+
+function startGame() {
+  gameState.running = true;
+  gameState.score = 0;
+  gameState.lives = 3;
+  gameState.level = 1;
+  gameState.bullets = [];
+  gameState.enemies = [];
+  gameState.enemyBullets = [];
+  gameState.particles = [];
+  gameState.powerups = [];
+  gameState.boss = null;
+  gameState.nextBossScore = 500;
+  gameState.shieldUntil = 0;
+  gameState.tripleUntil = 0;
+  gameState.lastShot = 0;
+  gameState.lastEnemySpawn = 0;
+  gameState.lastTime = performance.now();
+  var p = gameState.player;
+  p.x = gameState.viewW / 2 - p.w / 2;
+  p.y = gameState.viewH - 60;
+  $('gameOverlay').classList.add('hidden');
+  $('startGameBtn').textContent = '▶️ Mulai Bermain';
+  $('overlayTitle').textContent = '🚀 Pesawat Tempur';
+  updateHud();
+  if (gameState.rafId) cancelAnimationFrame(gameState.rafId);
+  gameState.rafId = requestAnimationFrame(gameLoop);
+}
+
+function updateHud() {
+  var s = $('score'); if (s) s.textContent = gameState.score;
+  var l = $('lives'); if (l) l.textContent = gameState.lives;
+  var lv = $('level'); if (lv) lv.textContent = gameState.level;
+  var hs = $('highScore'); if (hs) hs.textContent = Math.max(gameHighScore, gameState.score);
+
+  var sh = $('shieldHud');
+  if (sh) {
+    var rem = Math.max(0, Math.ceil((gameState.shieldUntil - Date.now()) / 1000));
+    if (rem > 0) {
+      sh.classList.add('active');
+      var st = $('shieldTime'); if (st) st.textContent = rem;
+    } else {
+      sh.classList.remove('active');
+    }
+  }
+  var tr = $('tripleHud');
+  if (tr) {
+    var rem2 = Math.max(0, Math.ceil((gameState.tripleUntil - Date.now()) / 1000));
+    if (rem2 > 0) {
+      tr.classList.add('active');
+      var tt = $('tripleTime'); if (tt) tt.textContent = rem2;
+    } else {
+      tr.classList.remove('active');
+    }
+  }
+}
+
+function gameLoop(t) {
+  if (!gameState.running) return;
+  ts = t;
+  var dt = Math.min(50, t - (gameState.lastTime || t));
+  gameState.lastTime = t;
+  update(dt, t); drawGame(); updateHud();
+  gameState.rafId = requestAnimationFrame(gameLoop);
+}
+
+function update(dt, t) {
+  var p = gameState.player, w = gameState.viewW, h = gameState.viewH;
+  var now = Date.now();
+
+  var newLevel = 1 + Math.floor(gameState.score / 300);
+  if (newLevel > gameState.level) {
+    gameState.level = newLevel;
+    toast('📈 Level ' + newLevel + '!');
+  }
+
+  if (!gameState.boss && gameState.score >= gameState.nextBossScore) {
+    spawnBoss();
+    gameState.nextBossScore += 500;
+  }
+
+  var hasTriple = now < gameState.tripleUntil;
+  if (t - gameState.lastShot > 220) {
+    gameState.lastShot = t;
+    if (hasTriple) {
+      gameState.bullets.push({ x: p.x + p.w / 2, y: p.y, vy: -7, r: 3, vx: -2 });
+      gameState.bullets.push({ x: p.x + p.w / 2, y: p.y, vy: -7, r: 3, vx: 0 });
+      gameState.bullets.push({ x: p.x + p.w / 2, y: p.y, vy: -7, r: 3, vx: 2 });
+    } else {
+      gameState.bullets.push({ x: p.x + p.w / 2, y: p.y, vy: -7, r: 3, vx: 0 });
+    }
+    playShootSound();
+  }
+
+  var spawnDelay = Math.max(400, 900 - gameState.level * 60);
+  if (t - gameState.lastEnemySpawn > spawnDelay) {
+    gameState.lastEnemySpawn = t;
+    var ew = 30, eh = 30;
+    gameState.enemies.push({
+      x: Math.random() * (w - ew), y: -eh, w: ew, h: eh,
+      vx: (Math.random() - 0.5) * (0.08 + gameState.level * 0.02),
+      vy: 0.06 + Math.random() * 0.06 + gameState.level * 0.015,
+      hp: 1 + Math.floor(Math.random() * Math.min(3, gameState.level)),
+      shootCd: 1500 + Math.random() * 1500,
+      shootInterval: Math.max(800, 2000 - gameState.level * 150)
+    });
+  }
+
+  for (var i = 0; i < gameState.bullets.length; i++) {
+    gameState.bullets[i].y += gameState.bullets[i].vy;
+    gameState.bullets[i].x += gameState.bullets[i].vx || 0;
+  }
+  gameState.bullets = gameState.bullets.filter(function(b) { return b.y > -10; });
+
+  for (var j = 0; j < gameState.enemies.length; j++) {
+    var e = gameState.enemies[j];
+    e.x += e.vx; e.y += e.vy;
+    if (e.x < 0) { e.x = 0; e.vx = -e.vx; }
+    if (e.x > w - e.w) { e.x = w - e.w; e.vx = -e.vx; }
+    e.shootCd -= dt;
+    if (e.shootCd <= 0 && e.y > 0) {
+      e.shootCd = e.shootInterval + Math.random() * 800;
+      gameState.enemyBullets.push({ x: e.x + e.w / 2, y: e.y + e.h, vy: 3 + gameState.level * 0.3, r: 4, vx: 0 });
+    }
+  }
+
+  if (gameState.boss) {
+    var boss = gameState.boss;
+    boss.x += boss.vx;
+    if (boss.x < 0 || boss.x + boss.w > w) boss.vx = -boss.vx;
+    boss.shootCd -= dt;
+    if (boss.shootCd <= 0 && boss.y >= 0) {
+      boss.shootCd = 900;
+      for (var ang = -1; ang <= 1; ang++) {
+        gameState.enemyBullets.push({
+          x: boss.x + boss.w / 2, y: boss.y + boss.h,
+          vy: 3.5, vx: ang * 1.5, r: 5
+        });
+      }
+    }
+  }
+
+  for (var k = 0; k < gameState.enemyBullets.length; k++) {
+    var eb = gameState.enemyBullets[k];
+    eb.y += eb.vy;
+    if (eb.vx) eb.x += eb.vx;
+  }
+  gameState.enemyBullets = gameState.enemyBullets.filter(function(b) { return b.y < h + 10; });
+
+  for (var a = 0; a < gameState.bullets.length; a++) {
+    var b = gameState.bullets[a];
+    if (b.hit) continue;
+
+    if (gameState.boss) {
+      var bo = gameState.boss;
+      if (b.x > bo.x && b.x < bo.x + bo.w && b.y > bo.y && b.y < bo.y + bo.h) {
+        b.hit = true;
+        bo.hp--;
+        spawnParticles(b.x, b.y, '#ffdd00', 4);
+        if (bo.hp <= 0) {
+          gameState.score += 100;
+          spawnParticles(bo.x + bo.w / 2, bo.y + bo.h / 2, '#e94560', 40);
+          gameState.boss = null;
+          playExplosionSound();
+          toast('👾 Boss dikalahkan! +100');
+          gameState.powerups.push({
+            x: bo.x + bo.w / 2, y: bo.y + bo.h / 2,
+            vy: 1.5, type: ['shield', 'triple', 'bomb'][Math.floor(Math.random() * 3)]
+          });
+        }
+      }
+    }
+
+    for (var c = 0; c < gameState.enemies.length; c++) {
+      var en = gameState.enemies[c];
+      if (b.hit || en.hp <= 0) continue;
+      if (b.x > en.x && b.x < en.x + en.w && b.y > en.y && b.y < en.y + en.h) {
+        b.hit = true; en.hp--;
+        spawnParticles(b.x, b.y, '#ffaa00', 4);
+        if (en.hp <= 0) {
+          gameState.score += 10;
+          spawnParticles(en.x + en.w / 2, en.y + en.h / 2, '#e94560', 12);
+          en.dead = true;
+          playExplosionSound();
+          if (Math.random() < 0.08) {
+            gameState.powerups.push({
+              x: en.x + en.w / 2, y: en.y + en.h / 2,
+              vy: 1.5, type: ['shield', 'triple', 'bomb'][Math.floor(Math.random() * 3)]
+            });
+          }
+        }
+      }
+    }
+  }
+  gameState.bullets = gameState.bullets.filter(function(b) { return !b.hit; });
+  gameState.enemies = gameState.enemies.filter(function(e) { return !e.dead && e.y < h + 40; });
+
+  for (var m = 0; m < gameState.enemies.length; m++) {
+    if (gameState.enemies[m].y > h && !gameState.enemies[m].passed) {
+      gameState.enemies[m].passed = true; loseLife();
+    }
+  }
+  gameState.enemies = gameState.enemies.filter(function(e) { return !e.passed; });
+
+  for (var pp = 0; pp < gameState.powerups.length; pp++) {
+    var pu = gameState.powerups[pp];
+    pu.y += pu.vy;
+    if (pu.x > p.x && pu.x < p.x + p.w && pu.y > p.y && pu.y < p.y + p.h) {
+      applyPowerup(pu.type);
+      pu.dead = true;
+    }
+  }
+  gameState.powerups = gameState.powerups.filter(function(pu) { return !pu.dead && pu.y < h + 20; });
+
+  for (var n = 0; n < gameState.enemyBullets.length; n++) {
+    var ebl = gameState.enemyBullets[n];
+    if (ebl.hit) continue;
+    if (ebl.x > p.x && ebl.x < p.x + p.w && ebl.y > p.y && ebl.y < p.y + p.h) {
+      ebl.hit = true;
+      if (Date.now() < gameState.shieldUntil) {
+        spawnParticles(ebl.x, ebl.y, '#3b82f6', 8);
+      } else {
+        loseLife();
+      }
+    }
+  }
+  gameState.enemyBullets = gameState.enemyBullets.filter(function(b) { return !b.hit; });
+
+  for (var q = 0; q < gameState.enemies.length; q++) {
+    var e2 = gameState.enemies[q];
+    if (e2.dead) continue;
+    if (e2.x < p.x + p.w && e2.x + e2.w > p.x && e2.y < p.y + p.h && e2.y + e2.h > p.y) {
+      e2.dead = true;
+      spawnParticles(e2.x + e2.w / 2, e2.y + e2.h / 2, '#e94560', 12);
+      if (Date.now() < gameState.shieldUntil) {
+        // shield
+      } else {
+        loseLife();
+      }
+    }
+  }
+  gameState.enemies = gameState.enemies.filter(function(e) { return !e.dead; });
+
+  for (var r = 0; r < gameState.particles.length; r++) {
+    var pt = gameState.particles[r];
+    pt.x += pt.vx; pt.y += pt.vy; pt.life -= 0.03;
+  }
+  gameState.particles = gameState.particles.filter(function(pt) { return pt.life > 0; });
+}
+
+function spawnBoss() {
+  var w = gameState.viewW;
+  gameState.boss = {
+    x: w / 2 - 50, y: -80,
+    w: 100, h: 70,
+    hp: 20 + gameState.level * 5,
+    maxHp: 20 + gameState.level * 5,
+    vx: 1.2,
+    vy: 0.3,
+    shootCd: 1200
+  };
+  toast('👾 BOSS muncul!');
+}
+
+function applyPowerup(type) {
+  var now = Date.now();
+  playPowerupSound();
+  if (type === 'shield') {
+    gameState.shieldUntil = now + 8000;
+    toast('🛡️ Shield 8 detik!');
+  } else if (type === 'triple') {
+    gameState.tripleUntil = now + 10000;
+    toast('🔫 Triple shot 10 detik!');
+  } else if (type === 'bomb') {
+    for (var i = 0; i < gameState.enemies.length; i++) {
+      spawnParticles(gameState.enemies[i].x + 15, gameState.enemies[i].y + 15, '#ffdd00', 10);
+      gameState.score += 10;
+    }
+    gameState.enemies = [];
+    gameState.enemyBullets = [];
+    if (gameState.boss) {
+      gameState.boss.hp -= 10;
+      if (gameState.boss.hp <= 0) {
+        spawnParticles(gameState.boss.x + 50, gameState.boss.y + 35, '#e94560', 30);
+        gameState.score += 100;
+        gameState.boss = null;
+      }
+    }
+    playExplosionSound();
+    toast('💣 BOM! Musuh hancur');
+  }
+}
+
+function spawnParticles(x, y, color, n) {
+  for (var i = 0; i < n; i++) {
+    var ang = Math.random() * Math.PI * 2;
+    var sp = 1 + Math.random() * 3;
+    gameState.particles.push({ x: x, y: y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 1, color: color });
+  }
+}
+
+function loseLife() {
+  if (Date.now() < gameState.shieldUntil) return;
+  gameState.lives--; updateHud();
+  var p = gameState.player;
+  spawnParticles(p.x + p.w / 2, p.y + p.h / 2, '#e94560', 20);
+  playHitSound();
+  if (gameState.lives <= 0) gameOver();
+}
+
+function gameOver() {
+  gameState.running = false;
+  cancelAnimationFrame(gameState.rafId);
+  if (gameState.score > gameHighScore) {
+    gameHighScore = gameState.score;
+    saveHighScore();
+  }
+  $('gameOverlay').classList.remove('hidden');
+  $('overlayTitle').textContent = '💥 Game Over';
+  $('overlayText').innerHTML =
+    'Skor: <b style="color:#4ecca3;font-size:22px">' + gameState.score + '</b><br>' +
+    'Level: <b style="color:#ffdd00">' + gameState.level + '</b><br>' +
+    '🏆 High Score: <b style="color:#a855f7">' + gameHighScore + '</b><br><br>' +
+    'Tekan mulai untuk coba lagi.';
+  $('startGameBtn').textContent = '🔄 Main Lagi';
+  updateHud();
+}
+
+function drawGame() {
+  if (!ctx) return;
+  var w = gameState.viewW || 480, h = gameState.viewH || 420;
+  ctx.clearRect(0, 0, w, h);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  for (var i = 0; i < 40; i++) {
+    var x = (i * 137.5) % w;
+    var y = (i * 91.3 + (ts * 0.02)) % h;
+    ctx.fillRect(x, y, 1.5, 1.5);
+  }
+
+  if (gameState.boss) {
+    var bo = gameState.boss;
+    ctx.save();
+    ctx.translate(bo.x + bo.w / 2, bo.y + bo.h / 2);
+    ctx.fillStyle = '#a855f7';
+    ctx.beginPath();
+    ctx.moveTo(0, bo.h / 2);
+    ctx.lineTo(bo.w / 2, 0);
+    ctx.lineTo(0, -bo.h / 2);
+    ctx.lineTo(-bo.w / 2, 0);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#ffdd00';
+    ctx.beginPath(); ctx.arc(-18, 0, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(18, 0, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.beginPath(); ctx.arc(-18, 0, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(18, 0, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    var hpPct = bo.hp / bo.maxHp;
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(bo.x, bo.y - 12, bo.w, 6);
+    ctx.fillStyle = hpPct > 0.5 ? '#4ecca3' : (hpPct > 0.25 ? '#ffdd00' : '#e94560');
+    ctx.fillRect(bo.x, bo.y - 12, bo.w * hpPct, 6);
+  }
+
+  var p = gameState.player;
+  if (p.w) {
+    if (Date.now() < gameState.shieldUntil) {
+      ctx.strokeStyle = 'rgba(59,130,246,0.8)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(p.x + p.w / 2, p.y + p.h / 2, p.w * 0.8, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.save();
+    ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+    ctx.fillStyle = '#4ecca3';
+    ctx.beginPath();
+    ctx.moveTo(0, -p.h / 2);
+    ctx.lineTo(p.w / 2, p.h / 2);
+    ctx.lineTo(0, p.h / 4);
+    ctx.lineTo(-p.w / 2, p.h / 2);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#0f3460';
+    ctx.beginPath(); ctx.arc(0, -2, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#e94560';
+    ctx.beginPath();
+    ctx.moveTo(-5, p.h / 3);
+    ctx.lineTo(0, p.h / 2 + 8 + Math.random() * 6);
+    ctx.lineTo(5, p.h / 3);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  for (var a = 0; a < gameState.bullets.length; a++) {
+    var b = gameState.bullets[a];
+    ctx.fillStyle = '#ffdd00';
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,221,0,0.3)';
+    ctx.fillRect(b.x - 1, b.y - 10, 2, 10);
+  }
+
+  ctx.fillStyle = '#ff5555';
+  for (var c = 0; c < gameState.enemyBullets.length; c++) {
+    var eb = gameState.enemyBullets[c];
+    ctx.beginPath(); ctx.arc(eb.x, eb.y, eb.r, 0, Math.PI * 2); ctx.fill();
+  }
+
+  for (var d = 0; d < gameState.enemies.length; d++) {
+    var e = gameState.enemies[d];
+    ctx.save();
+    ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
+    ctx.fillStyle = e.hp > 1 ? '#ff8844' : '#e94560';
+    ctx.beginPath();
+    ctx.moveTo(0, e.h / 2);
+    ctx.lineTo(e.w / 2, -e.h / 2);
+    ctx.lineTo(0, -e.h / 4);
+    ctx.lineTo(-e.w / 2, -e.h / 2);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#2a0a10';
+    ctx.beginPath(); ctx.arc(0, 2, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  for (var pp = 0; pp < gameState.powerups.length; pp++) {
+    var pu = gameState.powerups[pp];
+    var emoji = pu.type === 'shield' ? '🛡️' : (pu.type === 'triple' ? '🔫' : '💣');
+    ctx.font = '22px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(emoji, pu.x, pu.y);
+  }
+
+  for (var f = 0; f < gameState.particles.length; f++) {
+    var pt = gameState.particles[f];
+    ctx.globalAlpha = pt.life;
+    ctx.fillStyle = pt.color;
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function initAll() {
+  console.log('[APP] Inisialisasi MY Xteins Landing Page...');
+  initThemeUI();
+  initTabs();
+  initAlarm();
+  initDiary();
+  initTimer();
+  initGame();
+
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  console.log('[APP] Siap.');
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAll);
+} else {
+  initAll();
+}
+</script>
+</body>
+</html>
